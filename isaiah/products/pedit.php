@@ -1,4 +1,3 @@
-<?php include 'config.php'; ?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -87,43 +86,70 @@
   </head>
   <body>
     <h1>Edit Product</h1>
+    
     <?php
-    if (isset($_GET['id'])) {
-        $id = $_GET['id'];
-        $sql = "SELECT * FROM products WHERE id=?";
-        if (isset($conn)) {
-            $stmt = $conn->prepare($sql);
-            $stmt->execute([$id]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        }
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = $_POST['name'];
-            $description = $_POST['description'];
-            $price = $_POST['price'];
-            $brand = $_POST['brand'];
-            $type = $_POST['type'];
-            $gender = $_POST['gender'];
-            $sql = "UPDATE products SET name=?, description=?, price=?, brand=?, type=?, gender=? WHERE id=?";
-            if (isset($conn)) {
-                $stmt = $conn->prepare($sql);
-                $stmt->execute([$name, $description, $price, $brand, $type, $gender, $id]);
-                header("Location: http://localhost/isaiah/index.php?page=products");
-                exit();
-            }
-        }
-        
-        
-        if ($row) {
+// Establish a database connection using PDO
+$pdo = new PDO("mysql:host=localhost;dbname=productlists", "root", "");
+
+// Function to update a product's details
+function updateProduct($id, $brand, $name, $type, $gender, $description, $price, $pdo) {
+  try {
+    $sql = "UPDATE products SET brand = :brand, name = :name, type = :type, gender = :gender, description = :description, price = :price WHERE id = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->bindValue(':brand', $brand, PDO::PARAM_STR);
+    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+    $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+    $stmt->bindValue(':gender', $gender, PDO::PARAM_STR);
+    $stmt->bindValue(':description', $description, PDO::PARAM_STR);
+    $stmt->bindValue(':price', $price, PDO::PARAM_STR);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+      return true; // Update successful
+    } else {
+      return false; // Update failed
+    }
+  } catch (PDOException $e) {
+    return false; // Update failed due to exception
+  }
+}
+
+// Check if the form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $id = $_POST['id'];
+  $brand = $_POST['brand'];
+  $name = $_POST['name'];
+  $type = $_POST['type'];
+  $gender = $_POST['gender'];
+  $description = $_POST['description'];
+  $price = $_POST['price'];
+
+  if (updateProduct($id, $brand, $name, $type, $gender, $description, $price, $pdo)) {
+    echo 'success'; // Update successful
+  } else {
+    echo 'error'; // Update failed
+  }
+} else {
+  echo 'error'; // Request method is not POST
+}
 ?>
-        <form method="POST">
-            <div class="row">
-                <div class="col-25">
-                    <label for="name">Name:</label>
-                </div>
-                <div class="col-75">
-                    <input type="text" id="name" name="name" value="<?php echo $row['name']; ?>" required>
-                </div>
-            </div>
+
+
+
+
+
+
+
+<form method="POST">
+    <div class="row">
+        <div class="col-25">
+            <label for="name">Name:</label>
+        </div>
+        <div class="col-75">
+            <input type="text" id="name" name="name" value="<?php echo $row['name']; ?>" required>
+        </div>
+    </div>
             <div class="row">
                 <div class="col-25">
                     <label for="description">Description:</label>

@@ -97,7 +97,6 @@ $stmt->execute();
 <select name="user_status">
     <option value="Staff">Staff</option>
     <option value="Manager">Manager</option>
-    <option value="Supervisor">Supervisor</option>
 </select>
 <input type="submit" name="register_submit" value="Register">
 <p>Already have an account? <button onclick="location.href='login.php'">Login here</button></p>

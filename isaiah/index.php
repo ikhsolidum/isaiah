@@ -37,7 +37,7 @@ $user_status = $user->get_user_status($user_id);
         <a href="logout/logout.php" class="logout">Logout</a>
         <div class="user-status-wrapper">
             <span class="user-lastname">Logged in as: <?php echo $user->get_user_lastname($user_id).', '.$user->get_user_firstname($user_id);?></span>
-            <?php if($user_status == 'Staff' || $user_status == 'Supervisor' || $user_status == 'Manager'): ?>
+            <?php if($user_status == 'Staff' || $user_status == 'Manager'): ?>
             <span class="user-status"><?php echo $user_status; ?></span>
             <?php endif; ?>
         </div>
